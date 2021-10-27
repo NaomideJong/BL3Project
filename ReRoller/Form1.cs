@@ -1,13 +1,4 @@
-﻿using ReRoller.Properties;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Forms;
 
 namespace ReRoller
@@ -21,65 +12,26 @@ namespace ReRoller
 
         private void buttonReroll_Click(object sender, EventArgs e)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            imageChecker.Checker checker = new imageChecker.Checker();
 
-            Bitmap screenCapture = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-
-            Graphics g = Graphics.FromImage(screenCapture);
-
-            g.CopyFromScreen(Screen.PrimaryScreen.Bounds.X,
-                             Screen.PrimaryScreen.Bounds.Y,
-                             0, 0,
-                             screenCapture.Size,
-                             CopyPixelOperation.SourceCopy);
-
-            Bitmap myPic = Resources.lootsplosion;
-
-            bool isInCapture = IsInCapture(myPic, screenCapture);
-            
-            if(isInCapture)
+            bool isInCapture =checker.IsInScreen();
+            string resultMessage;
+            if (isInCapture)
             {
-                labelDone.Text = "Picture found!";
+                resultMessage = "Picture found!";
             }
+            else
+            {
+                resultMessage = "Picture found!";
+            }
+            //only call labelDone.Text function 1 time to make ccode faster
+            labelDone.Text= resultMessage;
 
-            sw.Stop();
-
-            TimeSpan ts = sw.Elapsed;
+            ScreenToCheckPictureBox.Image =checker.screenCapture;
+            SourceImagePictureBox.Image =checker.myPic;
         }
 
-        private bool IsInCapture(Bitmap searchFor, Bitmap searchIn)
-        {
-            for (int x = 0; x < searchIn.Width; x++)
-            {
-                for (int y = 0; y < searchIn.Height; y++)
-                {
-                    bool invalid = false;
-                    int k = x, l = y;
-                    for (int a = 0; a < searchFor.Width; a++)
-                    {
-                        l = y;
-                        for (int b = 0; b < searchFor.Height; b++)
-                        {
-                            if (searchFor.GetPixel(a, b) != searchIn.GetPixel(k, l))
-                            {
-                                invalid = true;
-                                break;
-                            }
-                            else
-                                l++;
-                        }
-                        if (invalid)
-                            break;
-                        else
-                            k++;
-                    }
-                    if (!invalid)
-                        return true;
-                }
-            }
-            return false;
-        }
+      
     }
 }
 
